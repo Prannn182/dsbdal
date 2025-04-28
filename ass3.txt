@@ -1,0 +1,9 @@
+ass3
+import pandas as pd
+ import numpy as nm
+ df = pd.read_csv("/home/comp/Downloads/archive/Iris.csv")
+ df
+df.describe()
+df["SepalLengthCm"].describe()
+df.groupby("Species").describe()
+df.groupby("Species").describe().sum()

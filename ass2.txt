@@ -1,0 +1,76 @@
+import numpy as np
+import pandas as pd
+
+df = pd.read_csv('Iris_dataset.csv')
+df
+
+
+df.isnull().sum()
+
+grouped = df.groupby('flower_name')
+summary = grouped[['sepal length (cm)', 'sepal width (cm)', 'petal length (cm)', 'petal width (cm)']].agg(['mean', 'median', 'min', 'max', 'std'])
+print(summary)
+
+#part2
+setosa = df[df['flower_name'] == 'setosa']
+print("\nSetosa Description:\n")
+print(setosa.describe())
+
+versicolor = df[df['flower_name'] == 'versicolor']
+print("\nVersicolor Description:\n")
+print(versicolor.describe())
+
+virginica = df[df['flower_name'] == 'virginica']
+print("\nVirginica Description:\n")
+print(virginica.describe())
+--------------------------------
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+df=pd.read_csv("student_performance11_final.csv")
+df
+df.shape
+df.size
+df.dtypes
+df.describe()
+df.isnull().sum()
+df.isnull()
+df['Reading Score']= df['Reading Score'].interpolate()
+df
+df.isnull().sum()
+df['Writing Score']=df['Writing Score'].fillna(method='ffill');
+df
+df.isnull().sum()
+df['Placement Score'] = df['Placement Score'].fillna(method='bfill')
+df
+df.isnull().sum()
+df['Writing Score'] = pd.to_numeric(df['Writing Score'], errors='coerce')
+df_imputed = df.fillna(df.median(numeric_only=True))
+def detect_and_cap_outliers(data, column):
+    Q1 = data[column].quantile(0.25)
+    Q3 = data[column].quantile(0.75)
+    IQR = Q3 - Q1
+    lower_bound = Q1 - 1.5 * IQR
+    upper_bound = Q3 + 1.5 * IQR
+    # Cap outliers
+    data[column] = data[column].clip(lower=lower_bound, upper=upper_bound)
+    return data
+df_capped = df_imputed.copy()
+for col in df_capped.select_dtypes(include='number').columns:
+    df_capped = detect_and_cap_outliers(df_capped, col)
+
+df_capped['Log_Placement_Score'] = np.log1p(df_capped['Placement Score'])
+plt.figure(figsize=(12, 5))
+
+plt.subplot(1, 2, 1)
+sns.histplot(df_capped['Placement Score'], bins=10, kde=True)
+plt.title("Original Placement Score")
+
+plt.subplot(1, 2, 2)
+sns.histplot(df_capped['Log_Placement_Score'], bins=10, kde=True)
+plt.title("Log-Transformed Placement Score")
+
+plt.tight_layout()
+plt.show()
+df_capped.to_csv("student_performance_cleaned.csv", index=False)

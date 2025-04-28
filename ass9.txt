@@ -1,0 +1,31 @@
+ass9
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+%matplotlib inline
+import seaborn as sns
+df = pd.read_csv("train_final.csv")
+df
+df.shape
+df.columns
+df.dtypes
+df.info()
+df.describe()
+df.isnull()
+df.isnull().sum()
+df['Age'] = df['Age'].interpolate()
+df
+df.isnull().sum()
+df['Cabin'] = df['Cabin'].replace(to_replace = np.nan,value = "unknown")
+df
+df.drop(['Embarked'],axis = 1,inplace = True)
+df
+df.isnull().sum()
+df = df.dropna(subset=['Age', 'Sex', 'Survived'])
+plt.figure(figsize=(10, 6))
+sns.boxplot(data=df, x='Sex', y='Age', hue='Survived')
+plt.title('Age Distribution by Sex and Survival Status')
+plt.xlabel('Sex')
+plt.ylabel('Age')
+plt.legend(title='Survived', labels=['No', 'Yes'])
+plt.show()

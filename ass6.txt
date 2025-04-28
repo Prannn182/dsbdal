@@ -1,0 +1,58 @@
+ass6
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.naive_bayes import GaussianNB
+from sklearn.metrics import confusion_matrix, accuracy_score, precision_score, recall_score
+df= pd.read_csv("iris_final.csv")
+df
+df.shape
+df.columns
+df.dtypes
+df.info()
+df.isnull()
+df.isnull().sum()
+df.describe()
+# Separate features and target
+X = df.drop("species", axis=1)
+y = df["species"]
+# Train-test split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+# Initialize and train the Naive Bayes model
+model = GaussianNB()
+model.fit(X_train, y_train)
+# Predict the test set
+y_pred = model.predict(X_test)
+# Compute confusion matrix
+labels = model.classes_
+cm = confusion_matrix(y_test, y_pred, labels=labels)
+# Display confusion matrix
+print("Confusion Matrix:")
+print(pd.DataFrame(cm, index=labels, columns=labels))
+# Calculate TP, TN, FP, FN for each class
+print("\nTrue Positives / False Positives / True Negatives / False Negatives per class:")
+for i, label in enumerate(labels):
+    TP = cm[i, i]
+    FP = cm[:, i].sum() - TP
+    FN = cm[i, :].sum() - TP
+    TN = cm.sum() - (TP + FP + FN)
+    print(f"{label} -> TP: {TP}, FP: {FP}, TN: {TN}, FN: {FN}")
+# Performance Metrics
+accuracy = accuracy_score(y_test, y_pred)
+error_rate = 1 - accuracy
+precision = precision_score(y_test, y_pred, average='macro')
+recall = recall_score(y_test, y_pred, average='macro')
+print(f"\nAccuracy: {accuracy:.2f}")
+print(f"Error Rate: {error_rate:.2f}")
+print(f"Precision: {precision:.2f}")
+print(f"Recall: {recall:.2f}")
+import matplotlib.pyplot as plt
+import seaborn as sns
+plt.figure(figsize=(6, 5))
+sns.heatmap(cm, annot=True, fmt='d', cmap='Blues',
+            xticklabels=labels,
+            yticklabels=labels)
+
+plt.title('Confusion Matrix')
+plt.xlabel('Predicted Label')
+plt.ylabel('True Label')
+plt.show()

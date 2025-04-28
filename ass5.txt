@@ -1,0 +1,52 @@
+ass5
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import LabelEncoder, StandardScaler
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import confusion_matrix, accuracy_score, precision_score, recall_score
+df=pd.read_csv("Social_Network_Ads_final.csv")
+df
+df.shape
+df.columns
+df.isnull()
+df.isnull().sum()
+df.info()
+df.size
+df.dtypes
+df.describe()
+# Step 1: Preprocess data
+# Convert categorical columns (like Gender) to numeric if needed
+if df['Gender'].dtype == 'object':
+    df['Gender'] = LabelEncoder().fit_transform(df['Gender'])
+df
+# Step 2: Feature and target split
+X = df[['Age', 'EstimatedSalary', 'Gender']]  # Include relevant features
+y = df['Purchased'] 
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=0)
+# Step 4: Feature scaling
+scaler = StandardScaler()
+X_train = scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)
+# Step 5: Train Logistic Regression model
+model = LogisticRegression()
+model.fit(X_train, y_train)
+# Step 6: Predictions
+y_pred = model.predict(X_test)
+cm = confusion_matrix(y_test, y_pred)
+TP = cm[1, 1]
+TN = cm[0, 0]
+FP = cm[0, 1]
+FN = cm[1, 0]
+# Step 8: Metrics
+accuracy = accuracy_score(y_test, y_pred)
+error_rate = 1 - accuracy
+precision = precision_score(y_test, y_pred)
+recall = recall_score(y_test, y_pred)
+# Step 9: Print results
+print("Confusion Matrix:")
+print(cm)
+print(f"TP: {TP}, TN: {TN}, FP: {FP}, FN: {FN}")
+print(f"Accuracy: {accuracy:.2f}")
+print(f"Error Rate: {error_rate:.2f}")
+print(f"Precision: {precision:.2f}")
+print(f"Recall: {recall:.2f}")
